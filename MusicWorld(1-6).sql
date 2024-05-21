@@ -49,7 +49,6 @@ INSERT INTO ConcertHall (id, name, city)
 VALUES (1, N'Мэдисон Сквер Гарден', N'Нью-Йорк'),
        (2, N'О2 Арена', N'Лондон'),
        (3, N'Будокан', N'Токио');
-
 	   --Заполнение таблиц рёбер
 INSERT INTO PlaysIn ($from_id, $to_id)
 VALUES ((SELECT $node_id FROM Musician WHERE id = 1),
@@ -68,6 +67,7 @@ VALUES ((SELECT $node_id FROM Musician WHERE id = 1),
         (SELECT $node_id FROM Band WHERE id = 2)),
        ((SELECT $node_id FROM Musician WHERE id = 8),
         (SELECT $node_id FROM Band WHERE id = 2));
+
 
 INSERT INTO PerformsIn ($from_id, $to_id)
 VALUES ((SELECT $node_id FROM Band WHERE id = 1),
@@ -96,6 +96,8 @@ VALUES ((SELECT $node_id FROM ConcertHall WHERE id = 1),
         (SELECT $node_id FROM Band WHERE id = 2)),
        ((SELECT $node_id FROM ConcertHall WHERE id = 3),
         (SELECT $node_id FROM Band WHERE id = 2));
+
+
 GO
 
 --Запросы с Match
@@ -129,6 +131,8 @@ FROM ConcertHall AS concert_hall , LocatedIn , Band
 WHERE MATCH(concert_hall-(LocatedIn)->Band)
       AND concert_hall.name = N'Мэдисон Сквер Гарден';
 
+
+
 --Запросы с SHORTEST_PATH
 
 --С кем может познакомиться Джон (id = 1)
@@ -151,6 +155,10 @@ WHERE MATCH(SHORTEST_PATH(Musician1(-(pi)->Musician2){1,3}))
 
 
 
+SELECT Band.name AS band, ConcertHall.name AS concert_hall
+FROM Band
+JOIN PerformsIn ON Band.$node_id = PerformsIn.$from_id
+JOIN ConcertHall ON ConcertHall.$node_id = PerformsIn.$to_id;
 
 GO
 
